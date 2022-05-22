@@ -1,3 +1,4 @@
+from atexit import register
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from .forms import AccountForm, AddAccountForm
@@ -6,7 +7,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
 
 class AccountRegistration(TemplateView):
-    
+    template_name = "register.html"
     def __init__(self):
         self.params = {
             "AccountCreate":False,
@@ -19,7 +20,7 @@ class AccountRegistration(TemplateView):
         self.params['account_form'] = AccountForm()
         self.params['add_account_form'] = AddAccountForm()
         self.params['AccountCreate'] = False
-        return render(request, "App_Folder_HTML/register.html", context=self.params)
+        return render(request, "register.html", context=self.params)
     
     #Post処理
     def post(self,request):
@@ -55,5 +56,5 @@ class AccountRegistration(TemplateView):
             # フォームが有効でない場合
             print(self.params["account_form"].errors)
 
-        return render(request,"App_Folder_HTML/register.html",context=self.params)
+        return render(request,"register.html",context=self.params)
  
