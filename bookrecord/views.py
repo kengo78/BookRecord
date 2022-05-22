@@ -2,9 +2,48 @@ from atexit import register
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from .forms import AccountForm, AddAccountForm
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+
+#ログイン
+def Login(request):
+    #POST
+    if request.method == 'POST':
+        #フォーム入力のユーザーID・パスワード取得
+        ID = request.POST.get('userid')#login.htmlのinputタグのname属性
+        Pass = request.POST.get('password')
+        
+        #Djangoの認証
+        user = authenticate(username=ID, password=Pass)
+        
+        #ユーザー認証
+        if user:
+            #activate判定
+            if user.is_active:
+                #login
+                login(request, user)
+                #pagination
+                return HttpResponseRedirect(reverse_lazy('home'))
+            else:
+                #アカウント利用不可
+                return HttpResponse("アカウントが有効ではありません")
+        else:
+            return HttpResponse("ログインID IDまたはパスワードが間違っています")
+    else:#GET
+        return render(request, 'login.html')
+    
+@login_required
+def Logout(request):
+    logout(request)
+    #ログアウト後のページネーション
+    return HttpResponseRedirect(reverse_lazy('Login'))
+
+@login_required
+def home(request):
+    params = {"UserID":request.user,}
+    return render(request, "home.html", context=params)
 
 class AccountRegistration(TemplateView):
     template_name = "register.html"
