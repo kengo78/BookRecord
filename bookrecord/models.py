@@ -15,3 +15,12 @@ class Account(models.Model):
     
     def __str__(self):
         return self.user.username
+    
+class Record(models.Model):
+    
+    title = models.CharField(max_length=100)
+    genre = models.CharField(max_length=100)
+    author = models.CharField(max_length=30)
+    content = models.TextField(null=True, blank=True)
+    end_data = models.DateField()#defaultは当日
+    
